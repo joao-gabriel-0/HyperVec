@@ -10,3 +10,18 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 - **High Performance**: HyperVec ensures efficient performance for your dynamic vector operations in C, allowing you to make the most of your code. 
 
 - **Easy-to-Use API**: HyperVec's user-friendly API streamlines your coding experience. With intuitive design, you'll find it easy to integrate HyperVec into your project, saving you time and effort.
+
+### TODO:
+Add the following functionalities:
+
+- vec_from 
+- vec_copy  
+- vec_insert 
+- vec_append 
+- vec_prepend 
+- vec_iter 
+- vec_find 
+- vec_map 
+- vec_filter 
+- vec_reduce 
+- vec_sort 
