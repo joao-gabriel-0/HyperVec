@@ -5,15 +5,15 @@
 
 int main(int argc, char const *argv[]) {
     // test 1: allocate and free vector
-        Vec_t vec1;
+    Vec_t vec1;
         
-        assert(0 == vec_alloc(&vec1, (long long int)1e9 * sizeof(char), sizeof(char)));
-        assert(0 == vec_free(&vec1));
+    assert(0 == vec_alloc(&vec1, (long long int)1e9 * sizeof(char), sizeof(char)));
+    assert(0 == vec_free(&vec1));
 
-        assert(NULL == vec1.buffer);
-        assert(0 == vec1.buffer_size);
-        assert(0 == vec1.elem_size);
-        assert(0 == vec1.used);
+    assert(NULL == vec1.buffer);
+    assert(0 == vec1.buffer_size);
+    assert(0 == vec1.elem_size);
+    assert(0 == vec1.used);
 
     // test 2: ensure that all vector's elements have the proper size when allocated
     Vec_t vec2;
