@@ -1,15 +1,15 @@
 CC = gcc
 
 CFLAGS = -Wall -Wextra -Wpointer-arith -Wcast-qual -Wformat=2 -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
-	     -Wmissing-declarations -Wnested-externs -Winline -Wdisabled-optimization -Wstrict-aliasing=2 -Winit-self \
-		 -Wswitch-default -Wswitch-enum -Wundef -Wunsafe-loop-optimizations -Wbad-function-cast -Wcast-qual \
-		 -Wstrict-overflow=5 -Wtrampolines -Wfloat-equal -Wredundant-decls
+     	 -Wmissing-declarations -Wnested-externs -Winline -Wdisabled-optimization -Wstrict-aliasing=2 -Winit-self \
+	 -Wswitch-default -Wswitch-enum -Wundef -Wunsafe-loop-optimizations -Wbad-function-cast -Wcast-qual \
+	 -Wstrict-overflow=5 -Wtrampolines -Wfloat-equal -Wredundant-decls
 
 OPTIMIZATION_FLAGS = -ftree-loop-linear -floop-strip-mine -floop-block -floop-nest-optimize -floop-parallelize-all -ftree-vectorize \
-				    -ftree-loop-distribution -ftree-partial-pre -fpeel-loops -fgraphite-identity -fno-math-errno -fno-trapping-math \
-					-fpredictive-commoning -fsplit-paths -fipa-pta -fivopts -fweb -flto=16 -fno-common -fno-plt -fgcse-after-reload \
-					-fno-semantic-interposition -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -O3 -march=native -mtune=native \
-					-pipe -fdevirtualize-at-ltrans
+		     -ftree-loop-distribution -ftree-partial-pre -fpeel-loops -fgraphite-identity -fno-math-errno -fno-trapping-math \
+	             -fpredictive-commoning -fsplit-paths -fipa-pta -fivopts -fweb -flto=16 -fno-common -fno-plt -fgcse-after-reload \
+		     -fno-semantic-interposition -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -O3 -march=native -mtune=native \
+		     -pipe -fdevirtualize-at-ltrans
 
 # directories
 SRC_DIRECTORY = ../src
