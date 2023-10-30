@@ -25,3 +25,55 @@ Add the following functionalities:
 - vec_filter 
 - vec_reduce 
 - vec_sort 
+
+---
+
+# Documentation
+
+This file contains basic information about what each one of the functions provided by ``src/hypervec.h`` does.
+
+## Vector definition
+
+``` C
+typedef struct Vec_s {
+    void *buffer;
+    size_t elem_size;
+    size_t buffer_size;
+    size_t used;
+} Vec_t;
+```
+
+Where:
+- ``buffer`` is a pointer to memory where the vector's elements are stored.
+- ``elem_size`` is the size (in bytes) of each element within the vector.
+- ``buffer_size`` is the total size (in bytes) of the memory buffer allocated for the vector.
+- ``used`` is the number of elements populated with values inside the buffer
+
+## Functionalities
+
+``vec_alloc`` is the initializator for every vector, it allocates memory for a vector's buffer and sets each variable inside it with the adequate value.
+``` C
+int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size);
+```
+**parameters**:
+- ``vec`` pointer to a vector.
+- ``init_buff_size`` initial buffer's allocation size (bytes).
+- ``elem_size`` size of each element inside the buffer (bytes).
+
+**return**: 
+- 0 if the allocation succeded | -1 if it failed for some reason
+
+# TEMPLATE (escreva em ingles)
+
+``<NOME DA FUNÇÃO>`` breve descrição do que ela faz.
+``` C
+cabeça (definição) da função (todas estão dentro de hypervec.h)
+```
+
+**parameters**:
+- ``parametro 1`` descrição do que ele é.
+- ``parametro 2`` descrição do que ele é.
+
+**return**: 
+- retorno da função
+
