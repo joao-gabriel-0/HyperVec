@@ -12,6 +12,9 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 - **Easy-to-Use API**: HyperVec's user-friendly API streamlines your coding experience. With intuitive design, you'll find it easy to integrate HyperVec into your project, saving you time and effort.
 
 ### TODO:
+
+Add contributors
+
 Add the following functionalities:
 
 - vec_from 
@@ -77,3 +80,4 @@ cabeça (definição) da função (todas estão dentro de hypervec.h)
 **return**: 
 - retorno da função
 
+# Contributors
