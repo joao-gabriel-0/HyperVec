@@ -13,6 +13,8 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 
 - **Easy-to-Use API**: HyperVec's user-friendly API streamlines your coding experience. With intuitive design, you'll find it easy to integrate HyperVec into your project, saving you time and effort.
 
+## Documentations can be found at <a href="https://github.com/joao-gabriel-0/HyperVec/tree/main/doc">doc</a> in English, Português-BR
+
 ---
 
 # Contributors
