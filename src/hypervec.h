@@ -2,6 +2,8 @@
  * MIT License
  * Copyright (c) 2023 João Gabriel
  * 
+ * This file is part of the HyperVec Library.
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -24,25 +26,24 @@
 #ifndef __VEC_HEADER
 #define __VEC_HEADER
 
-#include <stdio.h>
 #include <stddef.h>
-#include <stdint.h>
+#include <stdio.h>
 
-// 
-// some helper macros
-// 
-#define VEC_PRINT(vec, type, fmt)                            \
+// DEBUG
+#define PRINT_ELEM_SIZE   0x1
+#define PRINT_BUFFER_SIZE 0x2
+#define PRINT_USED        0x4
+#define PRINT_ALL         0xF
+
+// DEBUG
+#define __vec_print(vec, type, fmt)                          \
     for (size_t i = 0; i < (vec).used; i++) {                \
         type curr = *(type *) vec_get(&(vec), i);            \
         printf(i+1 == (vec).used ? fmt"\n" : fmt", ", curr); \
     } 
 
-#define vec_alloc(vec, initial_size, type) \
-    __vec_alloc(&(vec), initial_size, sizeof(type))
-
-#define vec_get_value(vec, index, value_type) \
-    *(value_type*) vec_get(&(vec), (size_t) index)
-
+#define vec_get_value(vec_ptr, index, value_type)   \
+    *(value_type*) vec_get(vec_ptr, (size_t) index)
 
 typedef struct Vec_s {
     void *buffer;
@@ -51,15 +52,17 @@ typedef struct Vec_s {
     size_t used;        // number of elements used inside the buffer (i.e., occupied).
 } Vec_t;
 
+// DEBUG
+void __vec_print_info(Vec_t *vec, unsigned char flags);
 
-// -------------- __vec_alloc --------------------------------------------- //
+// -------------- vec_alloc --------------------------------------------- //
 
 /// @brief allocate a vector with an initial buffer size.
 /// @param vec pointer to a vector
 /// @param init_buff_size Initial buffer allocation size (in bytes).
 /// @param elem_size size of each element inside the buffer (in bytes).
 /// @return 0 if successful, -1 if failed.
-int __vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size);
+int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size);
 
 // -------------- vec_free ---------------------------------------------- //
 

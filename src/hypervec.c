@@ -2,6 +2,8 @@
  * MIT License
  * Copyright (c) 2023 João Gabriel
  * 
+ * This file is part of the HyperVec Library.
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -23,18 +25,32 @@
 
 #include "hypervec.h"
 
-#include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-int __vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
+
+// DEBUG
+void __vec_print_info(Vec_t *vec, unsigned char flags) {
+    if (flags & 1) {
+        printf("\telem_size (bytes): %ld\n", vec->elem_size);
+    }
+    if (flags & 2) {
+        printf("\tbuffer_size (bytes): %ld\n", vec->buffer_size);
+    }
+    if (flags & 4) {
+        printf("\telements used: %ld\n", vec->used);
+    }
+    printf("\n");
+}
+
+int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
     if (NULL == vec || 0 == elem_size) { 
         return -1; 
     }
-    vec->elem_size = elem_size;
+    vec->elem_size   = elem_size;
     vec->buffer_size = init_buff_size;
-    vec->used = 0;
+    vec->used        = 0;
     
     if (0 == init_buff_size) {
         vec->buffer = NULL;
@@ -69,12 +85,10 @@ int vec_resize(Vec_t *vec, size_t new_buffer_size) {
     if (NULL == vec || 0 == new_buffer_size) {
         return -1;
     }
-    
     if (NULL == vec->buffer) {
-        return __vec_alloc(vec, new_buffer_size, vec->elem_size);
+        return vec_alloc(vec, new_buffer_size, vec->elem_size);
     }
-
-    if (0 != __vec_alloc(&resized_vec, new_buffer_size, vec->elem_size)) {
+    if (0 != vec_alloc(&resized_vec, new_buffer_size, vec->elem_size)) {
         return -1;
     }
     // copy contents from vec->buffer to resized_vec->buffer
@@ -104,13 +118,12 @@ void *vec_get(Vec_t *vec, size_t index) {
     return (char*) vec->buffer + vec->elem_size * index;
 }
 
-
 int vec_push(Vec_t *vec, void *src) {
 	if (NULL == vec || NULL == src) {
         return -1;
     }
     else if (NULL == vec->buffer) {
-		__vec_alloc(vec, sizeof(src) * vec->elem_size, vec->elem_size);
+		vec_alloc(vec, sizeof(src) * vec->elem_size, vec->elem_size);
     }
 
     if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
@@ -131,7 +144,6 @@ int vec_pop(Vec_t *vec, void *dst) {
     else if (NULL == vec->buffer || 0 == vec->used) {
         return 0;
     }
-    
     memcpy(dst, vec_get(vec, vec->used - 1), vec->elem_size);
     vec->used--;
 	
@@ -142,7 +154,6 @@ int vec_remove(Vec_t *vec, size_t index) {
     if (vec == NULL || index >= vec->used) {
         return -1;
     }
-
     void *element_to_remove = (char*) vec->buffer + (index * vec->elem_size);
     void *next_element = (char*) vec->buffer + ((index + 1) * vec->elem_size);
     
@@ -158,7 +169,6 @@ int vec_copy(Vec_t *dst, Vec_t *src) {
     if (NULL == dst || NULL == src || NULL == src->buffer) {
         return -1;
     }
-
     if (NULL == dst->buffer || dst->buffer_size < src->used * src->elem_size) {
         size_t new_buffer_size = src->used * src->elem_size;
 
@@ -177,7 +187,6 @@ int vec_append(Vec_t *dst, Vec_t *src) {
     if (dst == NULL || src == NULL || dst->elem_size != src->elem_size) {
         return -1;
     }
-
     size_t new_size = dst->used + src->used;
 
     if (dst->buffer_size < new_size) {
@@ -187,7 +196,7 @@ int vec_append(Vec_t *dst, Vec_t *src) {
     }
 
     // copy the contents of the source vector to the destination vector
-    memcpy((char*)dst->buffer + dst->used * dst->elem_size, src->buffer, src->used * src->elem_size);
+    memcpy((char*) dst->buffer + dst->used * dst->elem_size, src->buffer, src->used * src->elem_size);
     dst->used = new_size;
 
     return 0;
@@ -197,7 +206,6 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
     if (dst == NULL || src == NULL || dst->elem_size != src->elem_size) {
         return -1;
     }
-
     size_t new_size = dst->used + src->used;
 
     if (dst->buffer_size < new_size) {
@@ -207,7 +215,7 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
     }
 
     // move the existing data in the destination vector to make space for the source data
-    memmove((char*)dst->buffer + src->used * dst->elem_size, dst->buffer, dst->used * dst->elem_size);
+    memmove((char*) dst->buffer + src->used * dst->elem_size, dst->buffer, dst->used * dst->elem_size);
 
     // copy the contents of the source vector to the beginning of the destination vector
     memcpy(dst->buffer, src->buffer, src->used * src->elem_size);
@@ -215,5 +223,3 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
 
     return 0;
 }
-
-

@@ -1,10 +1,18 @@
-#include <stdio.h>
+/*
+ * This file is NOT part of the HyperVec Library.
+ */
+
 #include <string.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <assert.h>
+#include <stdio.h>
+
+#define DEBUG
 
 #include "../src/hypervec.h"
 
-#define One_GigaByte (int64_t) 1e9
+#define One_GB (int64_t) 1e9
 
 int main(void) {
     // 
@@ -12,10 +20,10 @@ int main(void) {
     // 
     Vec_t vec1 = {0};
 
-    assert(0 == vec_alloc(vec1, One_GigaByte, char));
+    assert(0 == vec_alloc(&vec1, One_GB, sizeof(char)));
 
     assert(NULL != vec1.buffer);
-    assert(One_GigaByte == vec1.buffer_size);
+    assert(One_GB == vec1.buffer_size);
     assert(sizeof(char) == vec1.elem_size);
     assert(0 == vec1.used);
 
@@ -39,9 +47,9 @@ int main(void) {
         char *e;
     } random_struct_t;
 
-    assert(0 == vec_alloc(vec2, One_GigaByte, random_struct_t));
+    assert(0 == vec_alloc(&vec2, One_GB, sizeof(random_struct_t)));
 
-    assert(One_GigaByte == vec2.buffer_size);
+    assert(One_GB == vec2.buffer_size);
     assert(sizeof(random_struct_t) == vec2.elem_size);
     assert(0 == vec2.used);
 
@@ -52,8 +60,8 @@ int main(void) {
     // 
     Vec_t vec3 = {0};
 
-    assert(0 == vec_alloc(vec3, 10 * sizeof(int), int));
-    assert(0 == vec_resize(&vec3, One_GigaByte * sizeof(int)));
+    assert(0 == vec_alloc(&vec3, 10 * sizeof(int), sizeof(int)));
+    assert(0 == vec_resize(&vec3, One_GB * sizeof(int)));
 
     assert(0 == vec_free(&vec3));
 
@@ -62,7 +70,7 @@ int main(void) {
     // 
     Vec_t vec4 = {0};
 
-    assert(0 == vec_alloc(vec4, One_GigaByte * sizeof(int), int));
+    assert(0 == vec_alloc(&vec4, One_GB * sizeof(int), sizeof(int)));
     assert(0 == vec_reset(&vec4));
     assert(vec4.used == 0);
 
@@ -73,7 +81,7 @@ int main(void) {
     // 
     Vec_t vec5 = {0};
 
-    assert(0 == vec_alloc(vec5, One_GigaByte * sizeof(int), int));
+    assert(0 == vec_alloc(&vec5, One_GB * sizeof(int), sizeof(int)));
 
     // populate the vector
     for (size_t i = 0; i < 100000; i++) {
@@ -81,7 +89,7 @@ int main(void) {
     }
     // assert that the vector was susscessfully populated
     for (int i = 0; i < 100000; i++) {
-        assert(i == vec_get_value(vec5, i, int));
+        assert(i == vec_get_value(&vec5, i, int));
     }
     assert(0 == vec_free(&vec5));
     
@@ -90,7 +98,7 @@ int main(void) {
     // 
     Vec_t vec6 = {0};
 
-    assert(0 == vec_alloc(vec6, One_GigaByte * sizeof(int), int));
+    assert(0 == vec_alloc(&vec6, One_GB * sizeof(int), sizeof(int)));
     
     int value1 = 42;
     assert(0 == vec_push(&vec6, &value1));
@@ -107,13 +115,13 @@ int main(void) {
     //
     Vec_t vec7 = {0};
 
-    assert(0 == vec_alloc(vec7, One_GigaByte * sizeof(int), int));
+    assert(0 == vec_alloc(&vec7, One_GB * sizeof(int), sizeof(int)));
     
     int value2 = 42;
     assert(0 == vec_push(&vec7, &value2));
     
     // assert that the pushed value is correct
-    int retrieved_value = vec_get_value(vec7, 0, int);
+    int retrieved_value = vec_get_value(&vec7, 0, int);
     assert(retrieved_value == 42);
 
     assert(0 == vec_free(&vec7));
@@ -123,7 +131,7 @@ int main(void) {
     //
     Vec_t vec8 = {0};
 
-    assert(0 == vec_alloc(vec8, One_GigaByte * sizeof(int), int));
+    assert(0 == vec_alloc(&vec8, One_GB * sizeof(int), sizeof(int)));
 
     // populate the vector
     for (size_t i = 0; i < 100; i++) {
@@ -136,9 +144,9 @@ int main(void) {
     // assert that the vector was sucessfully modified
     for (size_t i = 0; i < vec8.used; i++) {
         if (i < index_to_remove) {
-            assert((int)i == vec_get_value(vec8, i, int));
+            assert((int)i == vec_get_value(&vec8, i, int));
         } else {
-            assert((int)(i + 1) == vec_get_value(vec8, i, int));
+            assert((int)(i + 1) == vec_get_value(&vec8, i, int));
         }
     }
     assert(0 == vec_free(&vec8));
@@ -148,8 +156,8 @@ int main(void) {
     //
     Vec_t vec9 = {0}, vec10 = {0};
 
-    assert(0 == vec_alloc(vec9, 100 * sizeof(int), int));
-    assert(0 == vec_alloc(vec10, 1 * sizeof(int), int));
+    assert(0 == vec_alloc(&vec9, 100 * sizeof(int), sizeof(int)));
+    assert(0 == vec_alloc(&vec10, 1 * sizeof(int), sizeof(int)));
 
     for (int i = 0; i < 100; i++) {
         assert(0 == vec_push(&vec9, &i));
@@ -161,8 +169,8 @@ int main(void) {
     assert(vec9.used == vec10.used);
 
     for (size_t i = 0; i < vec9.used; i++) {
-        int vec9_value = vec_get_value(vec9, i, int);
-        int vec10_value = vec_get_value(vec10, i, int);
+        int vec9_value = vec_get_value(&vec9, i, int);
+        int vec10_value = vec_get_value(&vec10, i, int);
         assert(vec9_value == vec10_value);
     }
     assert(0 == vec_free(&vec9));
@@ -173,8 +181,8 @@ int main(void) {
     //
     Vec_t vec11 = {0}, vec12 = {0};
     
-    assert(0 == vec_alloc(vec11, 10 * sizeof(int), int));
-    assert(0 == vec_alloc(vec12, 10 * sizeof(int), int));
+    assert(0 == vec_alloc(&vec11, 10 * sizeof(int), sizeof(int)));
+    assert(0 == vec_alloc(&vec12, 10 * sizeof(int), sizeof(int)));
 
     // populate both vectors
     for (int i = 0; i < 5; i++) {
@@ -186,11 +194,12 @@ int main(void) {
 
     assert(0 == vec_append(&vec11, &vec12));
 
-    VEC_PRINT(vec11, int, "%d")
+    __vec_print(vec11, int, "%d")
+    __vec_print_info(&vec11, PRINT_ALL);
 
     // assert that vec11 contains elements from 0 to 9
     for (int i = 0; i < 10; i++) {
-        assert(i == vec_get_value(vec11, i, int));
+        assert(i == vec_get_value(&vec11, i, int));
     }
     assert(0 == vec_free(&vec11));
     assert(0 == vec_free(&vec12));
@@ -200,8 +209,8 @@ int main(void) {
     //
     Vec_t vec13 = {0}, vec14 = {0};
 
-    assert(0 == vec_alloc(vec13, 10 * sizeof(int), int));
-    assert(0 == vec_alloc(vec14, 10 * sizeof(int), int));
+    assert(0 == vec_alloc(&vec13, 10 * sizeof(int), sizeof(int)));
+    assert(0 == vec_alloc(&vec14, 10 * sizeof(int), sizeof(int)));
 
     // populate both vectors
     for (int i = 0; i < 5; i++) {
@@ -213,12 +222,13 @@ int main(void) {
 
     assert(0 == vec_prepend(&vec13, &vec14));
 
-    VEC_PRINT(vec13, int, "%d")
+    __vec_print(vec13, int, "%d")
+    __vec_print_info(&vec13, PRINT_ALL);
 
     // assert that vec13 contains elements from 5 to 9 followed by elements from 0 to 4
     int expected1[] = {5, 6, 7, 8, 9, 0, 1, 2, 3, 4};
     for (int i = 0; i < 10; i++) {
-        assert(expected1[i] == vec_get_value(vec13, i, int));
+        assert(expected1[i] == vec_get_value(&vec13, i, int));
     }
     assert(0 == vec_free(&vec13));
     assert(0 == vec_free(&vec14));
@@ -228,7 +238,7 @@ int main(void) {
     //
     Vec_t vec15 = {0};
 
-    assert(0 == vec_alloc(vec15, 10 * sizeof(char*), char*));
+    assert(0 == vec_alloc(&vec15, 10 * sizeof(char*), sizeof(char*)));
 
     const char *str1 = "this is";
     const char *str2 = "the power";
@@ -240,12 +250,13 @@ int main(void) {
     assert(0 == vec_push(&vec15, &str3));
     assert(0 == vec_push(&vec15, &str4));
 
-    VEC_PRINT(vec15, char*, "\"%s\"")
-
-    char *retrieved_str1 = vec_get_value(vec15, 0, char*);
-    char *retrieved_str2 = vec_get_value(vec15, 1, char*);
-    char *retrieved_str3 = vec_get_value(vec15, 2, char*);
-    char *retrieved_str4 = vec_get_value(vec15, 3, char*);
+    __vec_print(vec15, char*, "\"%s\"")
+    __vec_print_info(&vec15, PRINT_ALL);
+    
+    char *retrieved_str1 = vec_get_value(&vec15, 0, char*);
+    char *retrieved_str2 = vec_get_value(&vec15, 1, char*);
+    char *retrieved_str3 = vec_get_value(&vec15, 2, char*);
+    char *retrieved_str4 = vec_get_value(&vec15, 3, char*);
 
     assert(0 == strcmp(retrieved_str1, str1));
     assert(0 == strcmp(retrieved_str2, str2));
@@ -259,5 +270,3 @@ int main(void) {
 
     return 0;
 }
-
-

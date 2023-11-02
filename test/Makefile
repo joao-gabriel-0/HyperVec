@@ -1,3 +1,7 @@
+#
+# This file is NOT part of the HyperVec Library.
+#
+
 CC = gcc
 
 CFLAGS = -Wall -Wextra -pedantic -Wpointer-arith -Wcast-qual -Wformat=2 -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
