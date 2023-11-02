@@ -13,31 +13,13 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 
 - **Easy-to-Use API**: HyperVec's user-friendly API streamlines your coding experience. With intuitive design, you'll find it easy to integrate HyperVec into your project, saving you time and effort.
 
-### TODO:
-
-Add contributors
-
-Add the following functionalities:
-
-- vec_from 
-- vec_copy  
-- vec_insert 
-- vec_append 
-- vec_prepend 
-- vec_iter 
-- vec_find 
-- vec_map 
-- vec_filter 
-- vec_reduce 
-- vec_sort 
-
 ---
 
 # Documentation
 
-This file contains basic information about what each one of the functions provided by ``src/hypervec.h`` does.
+This section contains basic information about what each one of the functions provided by ``src/hypervec.h`` does.
 
-## Vector definition
+## Vector struct definition
 
 ``` C
 typedef struct Vec_s {
@@ -50,36 +32,38 @@ typedef struct Vec_s {
 
 Where:
 - ``buffer`` is a pointer to memory where the vector's elements are stored.
-- ``elem_size`` is the size (in bytes) of each element within the vector.
-- ``buffer_size`` is the total size (in bytes) of the memory buffer allocated for the vector.
-- ``used`` is the number of elements populated with values inside the buffer
+- ``elem_size`` is the size of individual elements inside the buffer (in bytes)
+- ``buffer_size`` is the size of the buffer (in bytes)
+- ``used`` is the number of elements used inside the buffer (i.e., occupied)
 
-## Functionalities
+## Functions
 
-``vec_alloc`` is the initializator for every vector, it allocates memory for a vector's buffer and sets each variable inside it with the adequate value.
+``vec_alloc`` is the initializator for every vector, it allocates a vector with an initial buffer size.
 ``` C
 int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size);
 ```
 **parameters**:
-- ``vec`` pointer to a vector.
-- ``init_buff_size`` initial buffer's allocation size (bytes).
-- ``elem_size`` size of each element inside the buffer (bytes).
+- ``vec`` pointer to a vector
+- ``init_buff_size`` initial buffer allocation size (in bytes)
+- ``elem_size`` size of each element inside the buffer (in bytes)
 
-**return**: 
-- 0 if the allocation succeded | -1 if it failed for some reason
+**return**:
+0 for success, -1 for failure
 
-# TEMPLATE (escreva em ingles)
-
-``<NOME DA FUNÇÃO>`` breve descrição do que ela faz.
-``` C
-cabeça (definição) da função (todas estão dentro de hypervec.h)
-```
-
-**parameters**:
-- ``parametro 1`` descrição do que ele é.
-- ``parametro 2`` descrição do que ele é.
-
-**return**: 
-- retorno da função
+---
 
 # Contributors
+
+### TODO:
+
+- Add contributors
+
+- Add the following functionalities:
+    - vec_from 
+    - vec_insert 
+    - vec_iter 
+    - vec_find 
+    - vec_map 
+    - vec_filter 
+    - vec_reduce 
+    - vec_sort 
