@@ -29,23 +29,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-// DEBUG
-void __vec_print_info(Vec_t *vec, unsigned char flags) {
-    if (flags & 1) {
-        printf("\telem_size (bytes): %ld\n", vec->elem_size);
-    }
-    if (flags & 2) {
-        printf("\tbuffer_size (bytes): %ld\n", vec->buffer_size);
-    }
-    if (flags & 4) {
-        printf("\telements used: %ld\n", vec->used);
-    }
-    printf("\n");
+static int is_null(void *ptr) {
+    return NULL == ptr;
 }
 
 int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
-    if (NULL == vec || 0 == elem_size) { 
+    if (is_null(vec) || 0 == elem_size) { 
         return -1; 
     }
     vec->elem_size   = elem_size;
@@ -58,17 +47,13 @@ int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
     else {
         vec->buffer = malloc(init_buff_size);
         
-        if (NULL == vec->buffer) { 
-            return -1; 
-        }
+        if (is_null(vec->buffer)) { return -1; }
     }
     return 0;
 }
 
 int vec_free(Vec_t *vec) {
-    if (NULL == vec || 0 == vec->buffer_size) { 
-        return -1; 
-    }
+    if (is_null(vec) || 0 == vec->buffer_size) { return -1; }
     
     free(vec->buffer);
     vec->buffer      = NULL;
@@ -82,10 +67,10 @@ int vec_free(Vec_t *vec) {
 int vec_resize(Vec_t *vec, size_t new_buffer_size) {
     Vec_t resized_vec = {0};
 
-    if (NULL == vec || 0 == new_buffer_size) {
+    if (is_null(vec) || 0 == new_buffer_size) {
         return -1;
     }
-    if (NULL == vec->buffer) {
+    if (is_null(vec->buffer)) {
         return vec_alloc(vec, new_buffer_size, vec->elem_size);
     }
     if (0 != vec_alloc(&resized_vec, new_buffer_size, vec->elem_size)) {
@@ -103,33 +88,23 @@ int vec_resize(Vec_t *vec, size_t new_buffer_size) {
 }
 
 int vec_reset(Vec_t *vec) {
-	if (NULL == vec) {
-        return -1;
-    }
-	vec->used = 0;
+	if (is_null(vec)) { return -1; }
+	
+    vec->used = 0;
 	
     return 0;
 }
 
-void *vec_get(Vec_t *vec, size_t index) {
-	if (index >= vec->used || NULL == vec || NULL == vec->buffer) {
-		return NULL;
-    }
-    return (char*) vec->buffer + vec->elem_size * index;
-}
-
 int vec_push(Vec_t *vec, void *src) {
-	if (NULL == vec || NULL == src) {
+	if (is_null(vec) || is_null(src)) {
         return -1;
     }
-    else if (NULL == vec->buffer) {
+    else if (is_null(vec->buffer)) {
 		vec_alloc(vec, sizeof(src) * vec->elem_size, vec->elem_size);
     }
 
     if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
-        if (0 != vec_resize(vec, 2 * vec->buffer_size)) {
-            return -1;
-        }
+        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { return -1; }
     }
     memcpy((char*) vec->buffer + vec->elem_size * vec->used, src, vec->elem_size);
     vec->used++;
@@ -138,10 +113,10 @@ int vec_push(Vec_t *vec, void *src) {
 }
 
 int vec_pop(Vec_t *vec, void *dst) {
-	if (NULL == vec) {
+	if (is_null(vec)) {
 		return -1;
     }
-    else if (NULL == vec->buffer || 0 == vec->used) {
+    else if (is_null(vec->buffer) || 0 == vec->used) {
         return 0;
     }
     memcpy(dst, vec_get(vec, vec->used - 1), vec->elem_size);
@@ -151,13 +126,12 @@ int vec_pop(Vec_t *vec, void *dst) {
 } 
 
 int vec_remove(Vec_t *vec, size_t index) {
-    if (vec == NULL || index >= vec->used) {
+    if (is_null(vec) || index >= vec->used) {
         return -1;
     }
     void *element_to_remove = (char*) vec->buffer + (index * vec->elem_size);
-    void *next_element = (char*) vec->buffer + ((index + 1) * vec->elem_size);
-    
-    size_t bytes_to_move = (vec->used - index - 1) * vec->elem_size;
+    void *next_element      = (char*) vec->buffer + ((index + 1) * vec->elem_size);
+    size_t bytes_to_move    = (vec->used - index - 1) * vec->elem_size;
 
     memmove(element_to_remove, next_element, bytes_to_move);
     vec->used--;
@@ -166,17 +140,16 @@ int vec_remove(Vec_t *vec, size_t index) {
 }
 
 int vec_copy(Vec_t *dst, Vec_t *src) {
-    if (NULL == dst || NULL == src || NULL == src->buffer) {
+    if (is_null(dst) || is_null(src) || NULL == src->buffer) {
         return -1;
     }
-    if (NULL == dst->buffer || dst->buffer_size < src->used * src->elem_size) {
+    if (is_null(dst->buffer) || dst->buffer_size < src->used * src->elem_size) {
         size_t new_buffer_size = src->used * src->elem_size;
 
         if (0 != vec_resize(dst, new_buffer_size)) {
             return -1;
         }
     }
-
     memcpy(dst->buffer, src->buffer, src->used * src->elem_size);
     dst->used = src->used;
 
@@ -184,7 +157,7 @@ int vec_copy(Vec_t *dst, Vec_t *src) {
 }
 
 int vec_append(Vec_t *dst, Vec_t *src) {
-    if (dst == NULL || src == NULL || dst->elem_size != src->elem_size) {
+    if (is_null(dst) || is_null(src) || dst->elem_size != src->elem_size) {
         return -1;
     }
     size_t new_size = dst->used + src->used;
@@ -194,7 +167,6 @@ int vec_append(Vec_t *dst, Vec_t *src) {
             return -1;
         }
     }
-
     // copy the contents of the source vector to the destination vector
     memcpy((char*) dst->buffer + dst->used * dst->elem_size, src->buffer, src->used * src->elem_size);
     dst->used = new_size;
@@ -203,7 +175,7 @@ int vec_append(Vec_t *dst, Vec_t *src) {
 }
 
 int vec_prepend(Vec_t *dst, Vec_t *src) {
-    if (dst == NULL || src == NULL || dst->elem_size != src->elem_size) {
+    if (is_null(dst) || is_null(src) || dst->elem_size != src->elem_size) {
         return -1;
     }
     size_t new_size = dst->used + src->used;
@@ -213,7 +185,6 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
             return -1;
         }
     }
-
     // move the existing data in the destination vector to make space for the source data
     memmove((char*) dst->buffer + src->used * dst->elem_size, dst->buffer, dst->used * dst->elem_size);
 
@@ -223,3 +194,11 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
 
     return 0;
 }
+
+void *vec_get(Vec_t *vec, size_t index) {
+	if (is_null(vec) || index >= vec->used || is_null(vec->buffer)) {
+		return NULL;
+    }
+    return (char*) vec->buffer + vec->elem_size * index;
+}
+
