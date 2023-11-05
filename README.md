@@ -1,4 +1,4 @@
-<img src="img/hypervec_logo.png" style="width: 100%; height: auto;">
+<img src="img/hypervec_logo_christmas.png" style="width: 100%; height: auto;">
 
 A public Open-Source Library for Safely Handling Dynamic Vector Operations in C
 
