@@ -26,6 +26,7 @@
 #ifndef __VEC_HEADER
 #define __VEC_HEADER
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -97,6 +98,13 @@ int vec_append(Vec_t *dst, Vec_t *src);
 /// @param src pointer to the source vector
 /// @return 0 if successful, -1 if failed
 int vec_prepend(Vec_t *dst, Vec_t *src);
+
+/// @brief filters out the elements of src and stores them in dst based on a filter function
+/// @param dst pointer to the destination vector
+/// @param src pointer to the source vector
+/// @param filter pointer to a filter function 
+/// @return 0 if successful, -1 if failed
+int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*));
 
 /// @brief retrieve an element's address from a vector based on a specific index
 /// @param vec pointer to a vector

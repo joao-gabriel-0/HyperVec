@@ -25,6 +25,7 @@
 
 #include "hypervec.h"
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -192,6 +193,34 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
     memcpy(dst->buffer, src->buffer, src->used * src->elem_size);
     dst->used = new_size;
 
+    return 0;
+}
+
+int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*)) {
+    void *ptr;
+    void *res;
+
+    if (is_null(dst) || is_null(src) || is_null(src->buffer)) {
+        return -1;
+    } 
+    else if (is_null(dst->buffer)) {
+        if (0 != vec_alloc(dst, 1, dst->elem_size)) { return -1; }
+    }
+    res = malloc(dst->elem_size);
+    if (is_null(res)) { return -1; }
+    
+    for (size_t i = 0; i < src->used; i++) {
+        ptr = vec_get(src, i);
+        if (is_null(ptr)) { return -1; }
+            
+        memcpy(res, ptr, dst->elem_size);
+
+        if (filter(res)) {
+            if (0 != vec_push(dst, res)) { free(res); return -1; }
+        }
+    }
+    free(res);
+    
     return 0;
 }
 

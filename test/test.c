@@ -2,6 +2,7 @@
  * This file is NOT part of the HyperVec Library.
  */
 
+#include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -26,9 +27,9 @@
     } printf("\n")
 
 #define vec_display_info(vec, flags)                                            \
-    if (flags & 1) { printf("\telem_size (bytes): %ld\n", vec.elem_size); }     \
+    if (flags & 1) { printf("\telem_size (bytes):   %ld\n", vec.elem_size); }   \
     if (flags & 2) { printf("\tbuffer_size (bytes): %ld\n", vec.buffer_size); } \
-    if (flags & 4) { printf("\telements used: %ld\n", vec.used); }              \
+    if (flags & 4) { printf("\telements used:       %ld\n", vec.used); }        \
     printf("\n")
 
 #define assert_vec_alloc(vec, buffer_size_val, elem_size_val) \
@@ -49,12 +50,17 @@
     assert(0    == (vec).elem_size   ); \
     assert(0    == (vec).used        )
 
+// filter function for test 12
+static bool is_even(void *element) {
+    int *num = (int *)element;
+    return (*num % 2 == 0);
+}
+
 int main(void) {
     // 
     // test 1: allocate and free vector 
     // 
     Vec_t vec1 = {0};
-
 
     assert(0 == vec_alloc(&vec1, One_GB, sizeof(char)));
     assert_vec_alloc(vec1, One_GB, sizeof(char));
@@ -321,6 +327,37 @@ int main(void) {
 
     vec_free(&vec14);
     assert_vec_free(vec14);
+
+    //
+    // test 12: filter elements from a vector that aren't even
+    //
+    Vec_t vec15 = {0}, vec16 = {0};
+
+    assert(0 == vec_alloc(&vec15, 25 * sizeof(int), sizeof(int)));
+    assert_vec_alloc(vec15, 25 * sizeof(int), sizeof(int));
+
+    assert(0 == vec_alloc(&vec16, 100 * sizeof(int), sizeof(int)));
+    assert_vec_alloc(vec16, 100 * sizeof(int), sizeof(int));
+
+    for (int i = 0; i < 25; i++) {
+        assert(0 == vec_push(&vec15, &i));
+    }
+    // filter even numbers from vec15 to vec16 
+    assert(0 == vec_filter(&vec16, &vec15, is_even));
+
+    printf("filtered elements from vec15 to vec16: ");
+    vec_print(vec16, int, "%d");
+
+    // assert that the filtered elements are even
+    for (size_t i = 0; i < vec16.used; i++) {
+        int *num = (int *)vec_get(&vec16, i);
+        assert(*num % 2 == 0);
+    }
+    assert(0 == vec_free(&vec15));
+    assert_vec_free(vec15);
+
+    assert(0 == vec_free(&vec16));
+    assert_vec_free(vec16);
 
     return 0;
 }
