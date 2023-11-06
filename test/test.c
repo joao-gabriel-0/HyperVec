@@ -56,6 +56,12 @@ static bool is_even(void *element) {
     return (*num % 2 == 0);
 }
 
+// filter function for test 13
+static void sum_int(void *element) {
+    int *num = (int *)element;
+    (*num) += 1;
+}
+
 int main(void) {
     // 
     // test 1: allocate and free vector 
@@ -358,6 +364,28 @@ int main(void) {
 
     assert(0 == vec_free(&vec16));
     assert_vec_free(vec16);
+
+    //
+    // test 13: iterate a vector
+    //
+    Vec_t vec17 = {0};
+
+    assert(0 == vec_alloc(&vec17, 25 * sizeof(int), sizeof(int)));
+    assert_vec_alloc(vec17, 25 * sizeof(int), sizeof(int));
+
+    for (int i = 0; i < 25; i++) {
+        assert(0 == vec_push(&vec17, &i));
+    }
+    printf("original vector: ");
+    vec_print(vec17, int, "%d");
+
+    assert(0 == vec_iter(&vec17, sum_int));
+
+    printf("iterated vector: ");
+    vec_print(vec17, int, "%d");
+
+    assert(0 == vec_free(&vec17));
+    assert_vec_free(vec17);
 
     return 0;
 }

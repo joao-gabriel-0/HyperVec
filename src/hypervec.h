@@ -99,12 +99,17 @@ int vec_append(Vec_t *dst, Vec_t *src);
 /// @return 0 if successful, -1 if failed
 int vec_prepend(Vec_t *dst, Vec_t *src);
 
-/// @brief filters out the elements of src and stores them in dst based on a filter function
+/// @brief filters out the elements of src and stores them in dst based on a user-defined filter() function
 /// @param dst pointer to the destination vector
 /// @param src pointer to the source vector
 /// @param filter pointer to a filter function 
 /// @return 0 if successful, -1 if failed
 int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*));
+
+/// @brief iterates the elements of a vector and calls a user-defined function iter() for each element
+/// @param vec pointer to a vector
+/// @return 0 if successful, -1 if failed
+int vec_iter(Vec_t *vec, void (*iter) (void *));
 
 /// @brief retrieve an element's address from a vector based on a specific index
 /// @param vec pointer to a vector

@@ -48,13 +48,17 @@ int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
     else {
         vec->buffer = malloc(init_buff_size);
         
-        if (is_null(vec->buffer)) { return -1; }
+        if (is_null(vec->buffer)) { 
+            return -1; 
+        }
     }
     return 0;
 }
 
 int vec_free(Vec_t *vec) {
-    if (is_null(vec) || 0 == vec->buffer_size) { return -1; }
+    if (is_null(vec) || 0 == vec->buffer_size) { 
+        return -1; 
+    }
     
     free(vec->buffer);
     vec->buffer      = NULL;
@@ -89,7 +93,9 @@ int vec_resize(Vec_t *vec, size_t new_buffer_size) {
 }
 
 int vec_reset(Vec_t *vec) {
-	if (is_null(vec)) { return -1; }
+	if (is_null(vec)) { 
+        return -1; 
+    }
 	
     vec->used = 0;
 	
@@ -105,7 +111,9 @@ int vec_push(Vec_t *vec, void *src) {
     }
 
     if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
-        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { return -1; }
+        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { 
+            return -1; 
+        }
     }
     memcpy((char*) vec->buffer + vec->elem_size * vec->used, src, vec->elem_size);
     vec->used++;
@@ -204,23 +212,48 @@ int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*)) {
         return -1;
     } 
     else if (is_null(dst->buffer)) {
-        if (0 != vec_alloc(dst, 1, dst->elem_size)) { return -1; }
+        if (0 != vec_alloc(dst, 1, dst->elem_size)) { 
+            return -1; 
+        }
     }
     res = malloc(dst->elem_size);
-    if (is_null(res)) { return -1; }
+    if (is_null(res)) { 
+        return -1; 
+    }
     
     for (size_t i = 0; i < src->used; i++) {
         ptr = vec_get(src, i);
-        if (is_null(ptr)) { return -1; }
+        if (is_null(ptr)) { 
+            return -1; 
+        }
             
         memcpy(res, ptr, dst->elem_size);
 
         if (filter(res)) {
-            if (0 != vec_push(dst, res)) { free(res); return -1; }
+            if (0 != vec_push(dst, res)) { 
+                free(res); 
+                return -1; 
+            }
         }
     }
     free(res);
     
+    return 0;
+}
+
+int vec_iter(Vec_t *vec, void (*iter) (void *)) {
+	void *ptr;
+
+	if (is_null(vec) || is_null(vec->buffer)) {
+		return -1; 
+    }
+	
+	for (size_t i = 0; i < vec->used; i++) {
+		ptr = vec_get(vec, i);
+		(void) iter(ptr);
+
+		i++;
+	}
     return 0;
 }
 
