@@ -35,15 +35,15 @@
 
 typedef struct Vec_s {
     void *buffer;
-    size_t elem_size;   // size of individual elements inside the buffer (in bytes)
-    size_t buffer_size; // size of the buffer (in bytes)
-    size_t used;        // number of elements used inside the buffer (i.e., occupied)
+    size_t elem_size;
+    size_t buffer_size;
+    size_t used;
 } Vec_t;
 
 /// @brief allocate a vector with an initial buffer size
 /// @param vec pointer to a vector
 /// @param init_buff_size initial buffer allocation size (in bytes)
-/// @param elem_size size of each element inside the buffer (in bytes)
+/// @param elem_size size of every buffer's elements (in bytes)
 /// @return 0 for success, -1 for failure
 int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size);
 

@@ -75,7 +75,7 @@ int main(void) {
     // 
     // test 2: allocate, resize, and free a vector
     // 
-    Vec_t vec2 = {0};
+    struct Vec_s vec2 = {0};
 
     assert(0 == vec_alloc(&vec2, 10 * sizeof(int), sizeof(int)));
     assert_vec_alloc(vec2, 10 * sizeof(int), sizeof(int));
