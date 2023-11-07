@@ -52,14 +52,12 @@
 
 // filter function for test 12
 static bool is_even(void *element) {
-    int *num = (int *)element;
-    return (*num % 2 == 0);
+    return (*(int *)element % 2 == 0);
 }
 
 // filter function for test 13
 static void sum_int(void *element) {
-    int *num = (int *)element;
-    (*num) += 1;
+    *(int *)element += 1;
 }
 
 int main(void) {
@@ -357,7 +355,7 @@ int main(void) {
     // assert that the filtered elements are even
     for (size_t i = 0; i < vec16.used; i++) {
         int *num = (int *)vec_get(&vec16, i);
-        assert(*num % 2 == 0);
+        assert(0 == *num % 2);
     }
     assert(0 == vec_free(&vec15));
     assert_vec_free(vec15);
@@ -384,8 +382,16 @@ int main(void) {
     printf("iterated vector: ");
     vec_print(vec17, int, "%d");
 
+    // assert that the iterated elements were incremented
+    for (size_t i = 0; i < vec17.used; i++) {
+        int *num = (int *)vec_get(&vec17, i);
+        assert((int) i == (*num) - 1);
+    }
+
     assert(0 == vec_free(&vec17));
     assert_vec_free(vec17);
+
+    printf("all tests succeded\n");
 
     return 0;
 }

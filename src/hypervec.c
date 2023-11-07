@@ -250,9 +250,7 @@ int vec_iter(Vec_t *vec, void (*iter) (void *)) {
 	
 	for (size_t i = 0; i < vec->used; i++) {
 		ptr = vec_get(vec, i);
-		(void) iter(ptr);
-
-		i++;
+		iter(ptr);
 	}
     return 0;
 }
