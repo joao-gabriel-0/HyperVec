@@ -102,12 +102,35 @@ int vec_reset(Vec_t *vec) {
     return 0;
 }
 
-int vec_push(Vec_t *vec, void *src) {
-	if (is_null(vec) || is_null(src)) {
+int vec_insert(Vec_t *vec, void *elem, size_t index) {
+    if (is_null(vec) || is_null(elem) || index > vec->used) {
         return -1;
     }
     else if (is_null(vec->buffer)) {
-		vec_alloc(vec, sizeof(src) * vec->elem_size, vec->elem_size);
+        vec_alloc(vec, sizeof(elem) * vec->elem_size, vec->elem_size);
+    }
+
+    if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
+        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { 
+            return -1; 
+        }
+    }
+    // shift elements to the right starting from index
+    memmove((char*) vec->buffer + (index + 1) * vec->elem_size, (char*) vec->buffer + index * vec->elem_size, (vec->used - index) * vec->elem_size);
+    // insert the new element at index
+    memcpy((char*) vec->buffer + index * vec->elem_size, elem, vec->elem_size);
+    vec->used++;
+    
+    return 0;
+}
+
+
+int vec_push(Vec_t *vec, void *elem) {
+	if (is_null(vec) || is_null(elem)) {
+        return -1;
+    }
+    else if (is_null(vec->buffer)) {
+		vec_alloc(vec, sizeof(elem) * vec->elem_size, vec->elem_size);
     }
 
     if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
@@ -116,7 +139,7 @@ int vec_push(Vec_t *vec, void *src) {
         }
     }
     // push the new element into the top of the vector's buffer
-    memcpy((char*) vec->buffer + vec->elem_size * vec->used, src, vec->elem_size);
+    memcpy((char*) vec->buffer + vec->elem_size * vec->used, elem, vec->elem_size);
     vec->used++;
 	
     return 0;
@@ -151,8 +174,27 @@ int vec_remove(Vec_t *vec, size_t index) {
     return 0;
 }
 
+int vec_compare(Vec_t *vec1, Vec_t *vec2) {
+    if (is_null(vec1) || is_null(vec2) || is_null(vec1->buffer) || is_null(vec2->buffer)) {
+        return -1;
+    }
+    else if (vec1->used != vec2->used) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < vec1->used; i++) {
+        char *value1 = (char*)vec_get(vec1, i);
+        char *value2 = (char*)vec_get(vec2, i);
+
+        if (memcmp(value1, value2, vec1->elem_size) != 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
 int vec_copy(Vec_t *dst, Vec_t *src) {
-    if (is_null(dst) || is_null(src) || NULL == src->buffer) {
+    if (is_null(dst) || is_null(src) || is_null(src->buffer)) {
         return -1;
     }
     else if (is_null(dst->buffer) || dst->buffer_size < src->used * src->elem_size) {
@@ -264,7 +306,7 @@ int vec_iter(Vec_t *vec, void (*iter) (void *)) {
 }
 
 void *vec_get(Vec_t *vec, size_t index) {
-	if (is_null(vec) || index >= vec->used || is_null(vec->buffer)) {
+	if (is_null(vec) || is_null(vec->buffer) || index >= vec->used) {
 		return NULL;
     }
     // return the element's address at the desired index

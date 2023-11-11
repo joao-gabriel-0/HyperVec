@@ -63,11 +63,18 @@ int vec_resize(Vec_t *vec, size_t new_buffer_size);
 /// @return 0 for success, -1 for failure
 int vec_reset(Vec_t *vec);
 
+/// @brief inserts an element into the vector at index
+/// @param vec pointer to a vector
+/// @param elem source element 
+/// @param index index to insert
+/// @return 0 for success, -1 for failure
+int vec_insert(Vec_t *vec, void *elem, size_t index);
+
 /// @brief push an element 'src' into the vector
 /// @param vec pointer to a vector
 /// @param src source element
 /// @return 0 for success, -1 for failure
-int vec_push(Vec_t *vec, void *src);
+int vec_push(Vec_t *vec, void *elem);
 
 /// @brief pop the first element of a vector into 'dst'
 /// @param vec pointer to a vector
@@ -98,6 +105,12 @@ int vec_append(Vec_t *dst, Vec_t *src);
 /// @param src pointer to the source vector
 /// @return 0 if successful, -1 if failed
 int vec_prepend(Vec_t *dst, Vec_t *src);
+
+/// @brief compares all elements of 2 vectors (they can have arbitrary sizes) 
+/// @param vec1 vector 1
+/// @param vec2 vector 2
+/// @return 0 if they're equal, -1 if not
+int vec_compare(Vec_t *vec1, Vec_t *vec2);
 
 /// @brief filters out the elements of src and stores them in dst based on a user-defined filter() function
 /// @param dst pointer to the destination vector

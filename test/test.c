@@ -258,6 +258,8 @@ int main(void) {
     assert(0 == vec_free(&vec11));
     assert_vec_free(vec11);
 
+    printf("\n");
+
     //
     // test 10: prepend two vectors 
     //
@@ -292,6 +294,8 @@ int main(void) {
 
     assert(0 == vec_free(&vec13));
     assert_vec_free(vec13);
+
+    printf("\n");
 
     //
     // test 11: manipulate some strings using dynamic vectors (10 * sizeof(char) allocation)
@@ -332,6 +336,8 @@ int main(void) {
     vec_free(&vec14);
     assert_vec_free(vec14);
 
+    printf("\n");
+
     //
     // test 12: filter elements from a vector that aren't even
     //
@@ -363,6 +369,8 @@ int main(void) {
     assert(0 == vec_free(&vec16));
     assert_vec_free(vec16);
 
+    printf("\n");
+
     //
     // test 13: iterate a vector
     //
@@ -391,7 +399,74 @@ int main(void) {
     assert(0 == vec_free(&vec17));
     assert_vec_free(vec17);
 
+    printf("\n");
+
+    //
+    // test 14: insert an element at an index
+    //
+    Vec_t vec18 = {0};
+
+    assert(0 == vec_alloc(&vec18, 25 * sizeof(uint32_t), sizeof(uint32_t)));
+    assert_vec_alloc(vec18, 25 * sizeof(uint32_t), sizeof(uint32_t));
+
+    for (uint32_t i = 0; i < 25; i++) {
+        assert(0 == vec_push(&vec18, &i));
+    }
+    printf("original vector: ");
+    vec_print(vec18, uint32_t, "%d");
+
+    uint32_t element_to_insert = 0xDEADBEEF;
+    assert(0 == vec_insert(&vec18, &element_to_insert, 20));
+
+    printf("updated vector: ");
+    vec_print(vec18, uint32_t, "%u");
+
+    // assert that the element was properly inserted
+    assert(0xDEADBEEF == vec_get_value(&vec18, 20, uint32_t));
+    assert(0 == vec_free(&vec18));
+    assert_vec_free(vec18);
+
+    printf("\n");
+
     printf("all tests succeded\n");
+
+    //
+    // test 15: compare 3 vectors
+    //
+    Vec_t vec19 = {0}, vec20 = {0}, vec21 = {0};
+
+    assert(0 == vec_alloc(&vec19, 25 * sizeof(uint32_t), sizeof(uint32_t)));
+    assert_vec_alloc(vec19, 25 * sizeof(uint32_t), sizeof(uint32_t));
+    
+    assert(0 == vec_alloc(&vec20, 30 * sizeof(uint32_t), sizeof(uint32_t)));
+    assert_vec_alloc(vec20, 30 * sizeof(uint32_t), sizeof(uint32_t));
+    
+    assert(0 == vec_alloc(&vec21, 45 * sizeof(uint32_t), sizeof(uint32_t)));
+    assert_vec_alloc(vec21, 45 * sizeof(uint32_t), sizeof(uint32_t));
+    
+    for (int i = 0; i < 25; i++) {
+        assert(0 == vec_push(&vec19, &i));
+    }
+
+    for (int i = 0; i < 25; i++) {
+        assert(0 == vec_push(&vec20, &i));
+    }
+
+    for (int i = 0; i < 45; i++) {
+        assert(0 == vec_push(&vec21, &i));
+    }
+
+    assert(0 == vec_compare(&vec19, &vec20));
+    assert(-1 == vec_compare(&vec19, &vec21));
+
+    assert(0 == vec_free(&vec19));
+    assert_vec_free(vec19);
+
+    assert(0 == vec_free(&vec20));
+    assert_vec_free(vec20);
+
+    assert(0 == vec_free(&vec21));
+    assert_vec_free(vec21);
 
     return 0;
 }
