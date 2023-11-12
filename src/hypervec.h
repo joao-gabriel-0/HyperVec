@@ -63,12 +63,17 @@ int vec_resize(Vec_t *vec, size_t new_buffer_size);
 /// @return 0 for success, -1 for failure
 int vec_reset(Vec_t *vec);
 
-/// @brief inserts an element into the vector at index
+/// @brief retrieve an element's address from a vector based on a specific index
 /// @param vec pointer to a vector
-/// @param elem source element 
-/// @param index index to insert
-/// @return 0 for success, -1 for failure
-int vec_insert(Vec_t *vec, void *elem, size_t index);
+/// @param index index of the desired element
+/// @return address of the desired element
+void *vec_get(Vec_t *vec, size_t index);
+
+/// @brief remove an element from a vector at a specific index
+/// @param vec pointer to a vector
+/// @param index index of the desired element
+/// @return 0 if successful, -1 if failed
+int vec_remove(Vec_t *vec, size_t index);
 
 /// @brief push an element 'src' into the vector
 /// @param vec pointer to a vector
@@ -82,11 +87,17 @@ int vec_push(Vec_t *vec, void *elem);
 /// @return 0 if successful, -1 if failed
 int vec_pop(Vec_t *vec, void *dst);
 
-/// @brief remove an element from a vector at a specific index
+/// @brief inserts an element into the vector at index
 /// @param vec pointer to a vector
-/// @param index index of the desired element
+/// @param elem source element 
+/// @param index index to insert
+/// @return 0 for success, -1 for failure
+int vec_insert(Vec_t *vec, void *elem, size_t index);
+
+/// @brief re-organizes the elements of a vector in reverse order (end to start)
+/// @param vec pointer to a vector
 /// @return 0 if successful, -1 if failed
-int vec_remove(Vec_t *vec, size_t index);
+int vec_revert(Vec_t *vec);
 
 /// @brief copy the contents of 'src' to 'dst'
 /// @param dst pointer to the destination vector
@@ -109,7 +120,7 @@ int vec_prepend(Vec_t *dst, Vec_t *src);
 /// @brief compares all elements of 2 vectors (they can have arbitrary sizes) 
 /// @param vec1 vector 1
 /// @param vec2 vector 2
-/// @return 0 if they're equal, -1 if not
+/// @return 0 if they're all equal, -1 if not
 int vec_compare(Vec_t *vec1, Vec_t *vec2);
 
 /// @brief filters out the elements of src and stores them in dst based on a user-defined filter() function
@@ -123,11 +134,5 @@ int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*));
 /// @param vec pointer to a vector
 /// @return 0 if successful, -1 if failed
 int vec_iter(Vec_t *vec, void (*iter) (void *));
-
-/// @brief retrieve an element's address from a vector based on a specific index
-/// @param vec pointer to a vector
-/// @param index Index of the desired element
-/// @return address of the desired element
-void *vec_get(Vec_t *vec, size_t index);
 
 #endif //__VEC_HEADER

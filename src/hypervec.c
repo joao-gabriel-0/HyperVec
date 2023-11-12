@@ -34,10 +34,22 @@ static int is_null(void *ptr) {
     return NULL == ptr;
 }
 
+static int check_mul_overflow(size_t a, size_t b) {
+    if (a > __SIZE_MAX__ / b) {
+        return 1;
+    }
+    return 0;
+}
+
 int vec_alloc(Vec_t *vec, size_t init_buff_size, size_t elem_size) {
     if (is_null(vec) || 0 == elem_size) { 
         return -1; 
     }
+    // check for integer overflow in buffer_size calculation
+    if (check_mul_overflow(init_buff_size, elem_size)) {
+        return -1;
+    }
+
     // allocate the vector's buffer and set each variable acording to their respective values
     vec->elem_size   = elem_size;
     vec->buffer_size = init_buff_size;
@@ -60,8 +72,9 @@ int vec_free(Vec_t *vec) {
     if (is_null(vec) || 0 == vec->buffer_size) { 
         return -1; 
     }
-    // free the vector's buffer and reset every variable
-    free(vec->buffer);
+    if (!is_null(vec->buffer)) {
+        free(vec->buffer);
+    }
     vec->buffer      = NULL;
     vec->elem_size   = 0;
     vec->buffer_size = 0;
@@ -102,28 +115,27 @@ int vec_reset(Vec_t *vec) {
     return 0;
 }
 
-int vec_insert(Vec_t *vec, void *elem, size_t index) {
-    if (is_null(vec) || is_null(elem) || index > vec->used) {
-        return -1;
+void *vec_get(Vec_t *vec, size_t index) {
+	if (is_null(vec) || is_null(vec->buffer) || index >= vec->used) {
+		return NULL;
     }
-    else if (is_null(vec->buffer)) {
-        vec_alloc(vec, sizeof(elem) * vec->elem_size, vec->elem_size);
-    }
-
-    if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
-        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { 
-            return -1; 
-        }
-    }
-    // shift elements to the right starting from index
-    memmove((char*) vec->buffer + (index + 1) * vec->elem_size, (char*) vec->buffer + index * vec->elem_size, (vec->used - index) * vec->elem_size);
-    // insert the new element at index
-    memcpy((char*) vec->buffer + index * vec->elem_size, elem, vec->elem_size);
-    vec->used++;
-    
-    return 0;
+    // return the element's address at the desired index
+    return (char*) vec->buffer + vec->elem_size * index;
 }
 
+int vec_remove(Vec_t *vec, size_t index) {
+    if (is_null(vec) || index >= vec->used) {
+        return -1;
+    }
+    void *element_to_remove = (char*) vec->buffer + (index * vec->elem_size);
+    void *next_element      = (char*) vec->buffer + ((index + 1) * vec->elem_size);
+    size_t bytes_to_move    = (vec->used - index - 1) * vec->elem_size;
+
+    memmove(element_to_remove, next_element, bytes_to_move);
+    vec->used--;
+
+    return 0;
+}
 
 int vec_push(Vec_t *vec, void *elem) {
 	if (is_null(vec) || is_null(elem)) {
@@ -131,6 +143,11 @@ int vec_push(Vec_t *vec, void *elem) {
     }
     else if (is_null(vec->buffer)) {
 		vec_alloc(vec, sizeof(elem) * vec->elem_size, vec->elem_size);
+    }
+
+    // check for size_t overflow
+    if (check_mul_overflow(vec->used + 1, vec->elem_size)) {
+        return -1;
     }
 
     if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
@@ -159,37 +176,48 @@ int vec_pop(Vec_t *vec, void *dst) {
     return 0;
 } 
 
-int vec_remove(Vec_t *vec, size_t index) {
-    if (is_null(vec) || index >= vec->used) {
+int vec_insert(Vec_t *vec, void *elem, size_t index) {
+    if (is_null(vec) || is_null(elem) || index > vec->used) {
         return -1;
     }
-    void *element_to_remove = (char*) vec->buffer + (index * vec->elem_size);
-    void *next_element      = (char*) vec->buffer + ((index + 1) * vec->elem_size);
-    size_t bytes_to_move    = (vec->used - index - 1) * vec->elem_size;
+    else if (is_null(vec->buffer)) {
+        vec_alloc(vec, sizeof(elem) * vec->elem_size, vec->elem_size);
+    }
 
-    // move the already occupied memory forward 
-    memmove(element_to_remove, next_element, bytes_to_move);
-    vec->used--;
-
+    if (vec->buffer_size <= (vec->elem_size * (vec->used + 1))) {
+        if (0 != vec_resize(vec, 2 * vec->buffer_size)) { 
+            return -1; 
+        }
+    }
+    // shift elements to the right starting from index
+    memmove((char*) vec->buffer + (index + 1) * vec->elem_size, (char*) vec->buffer + index * vec->elem_size, (vec->used - index) * vec->elem_size);
+    // insert the new element at index
+    memcpy((char*) vec->buffer + index * vec->elem_size, elem, vec->elem_size);
+    vec->used++;
+    
     return 0;
 }
 
-int vec_compare(Vec_t *vec1, Vec_t *vec2) {
-    if (is_null(vec1) || is_null(vec2) || is_null(vec1->buffer) || is_null(vec2->buffer)) {
+int vec_revert(Vec_t *vec) {
+    if (is_null(vec) || is_null(vec->buffer)) {
         return -1;
     }
-    else if (vec1->used != vec2->used) {
+    void *tmp = malloc(vec->elem_size);
+
+    if (is_null(tmp)) {
         return -1;
     }
 
-    for (size_t i = 0; i < vec1->used; i++) {
-        char *value1 = (char*)vec_get(vec1, i);
-        char *value2 = (char*)vec_get(vec2, i);
+    for (size_t i = 0; i < vec->used / 2; i++) {
+        void *first_elem = vec_get(vec, i);
+        void *last_elem = vec_get(vec, vec->used - i - 1);
 
-        if (memcmp(value1, value2, vec1->elem_size) != 0) {
-            return -1;
-        }
+        memcpy(tmp, first_elem, vec->elem_size);
+        memcpy(first_elem, last_elem, vec->elem_size);
+        memcpy(last_elem, tmp, vec->elem_size);
     }
+    free(tmp);
+
     return 0;
 }
 
@@ -251,6 +279,25 @@ int vec_prepend(Vec_t *dst, Vec_t *src) {
     return 0;
 }
 
+int vec_compare(Vec_t *vec1, Vec_t *vec2) {
+    if (is_null(vec1) || is_null(vec2) || is_null(vec1->buffer) || is_null(vec2->buffer)) {
+        return -1;
+    }
+    else if (vec1->used != vec2->used) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < vec1->used; i++) {
+        char *value1 = (char*)vec_get(vec1, i);
+        char *value2 = (char*)vec_get(vec2, i);
+
+        if (0 != memcmp(value1, value2, vec1->elem_size)) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
 int vec_filter(Vec_t *dst, Vec_t *src, bool (*filter)(void*)) {
     void *ptr;
     void *res;
@@ -305,11 +352,4 @@ int vec_iter(Vec_t *vec, void (*iter) (void *)) {
     return 0;
 }
 
-void *vec_get(Vec_t *vec, size_t index) {
-	if (is_null(vec) || is_null(vec->buffer) || index >= vec->used) {
-		return NULL;
-    }
-    // return the element's address at the desired index
-    return (char*) vec->buffer + vec->elem_size * index;
-}
 

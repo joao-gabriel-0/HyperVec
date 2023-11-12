@@ -19,7 +19,7 @@
 #define PRINT_USED        0x4
 #define PRINT_ALL         0xF
 
-#define vec_print(vec, type, fmt)                           \
+#define vec_printf(vec, type, fmt)                           \
     printf("[");                                            \
     for (size_t i = 0; i < (vec).used; i++) {               \
         type curr = *(type *) vec_get(&(vec), i);           \
@@ -245,7 +245,7 @@ int main(void) {
 
     assert(0 == vec_append(&vec10, &vec11));
 
-    vec_print(vec10, int, "%d");
+    vec_printf(vec10, int, "%d");
     vec_display_info(vec10, PRINT_ALL);
 
     // assert that vec10 contains elements from 0 to 9
@@ -281,7 +281,7 @@ int main(void) {
 
     assert(0 == vec_prepend(&vec12, &vec13));
 
-    vec_print(vec12, int, "%d");
+    vec_printf(vec12, int, "%d");
     vec_display_info(vec12, PRINT_ALL);
 
     // assert that vec12 contains elements from 5 to 9 followed by elements from 0 to 4
@@ -315,7 +315,7 @@ int main(void) {
     assert(0 == vec_push(&vec14, &str3));
     assert(0 == vec_push(&vec14, &str4));
 
-    vec_print(vec14, char*, "\"%s\"");
+    vec_printf(vec14, char*, "\"%s\"");
     vec_display_info(vec14, PRINT_ALL);
     
     char *retrieved_str1 = vec_get_value(&vec14, 0, char*);
@@ -356,7 +356,7 @@ int main(void) {
     assert(0 == vec_filter(&vec16, &vec15, is_even));
 
     printf("filtered elements from vec15 to vec16: ");
-    vec_print(vec16, int, "%d");
+    vec_printf(vec16, int, "%d");
 
     // assert that the filtered elements are even
     for (size_t i = 0; i < vec16.used; i++) {
@@ -383,12 +383,12 @@ int main(void) {
         assert(0 == vec_push(&vec17, &i));
     }
     printf("original vector: ");
-    vec_print(vec17, int, "%d");
+    vec_printf(vec17, int, "%d");
 
     assert(0 == vec_iter(&vec17, sum_int));
 
     printf("iterated vector: ");
-    vec_print(vec17, int, "%d");
+    vec_printf(vec17, int, "%d");
 
     // assert that the iterated elements were incremented
     for (size_t i = 0; i < vec17.used; i++) {
@@ -412,14 +412,14 @@ int main(void) {
     for (uint32_t i = 0; i < 25; i++) {
         assert(0 == vec_push(&vec18, &i));
     }
-    printf("original vector: ");
-    vec_print(vec18, uint32_t, "%d");
+    printf("original vector (values in hex): ");
+    vec_printf(vec18, uint32_t, "%x");
 
     uint32_t element_to_insert = 0xDEADBEEF;
     assert(0 == vec_insert(&vec18, &element_to_insert, 20));
 
-    printf("updated vector: ");
-    vec_print(vec18, uint32_t, "%u");
+    printf("updated vector (values in hex): ");
+    vec_printf(vec18, uint32_t, "%x");
 
     // assert that the element was properly inserted
     assert(0xDEADBEEF == vec_get_value(&vec18, 20, uint32_t));
@@ -427,8 +427,6 @@ int main(void) {
     assert_vec_free(vec18);
 
     printf("\n");
-
-    printf("all tests succeded\n");
 
     //
     // test 15: compare 3 vectors
@@ -467,6 +465,31 @@ int main(void) {
 
     assert(0 == vec_free(&vec21));
     assert_vec_free(vec21);
+
+    //
+    // test 16: revert a vector
+    //
+    Vec_t vec22 = {0};
+
+    assert(0 == vec_alloc(&vec22, 30 * sizeof(uint32_t), sizeof(uint32_t)));
+    assert_vec_alloc(vec22, 30 * sizeof(uint32_t), sizeof(uint32_t));
+
+    for (uint32_t i = 0; i < 30; i++) {
+        assert(0 == vec_push(&vec22, &i));
+    }
+    assert(0 == vec_revert(&vec22));
+
+    printf("reversed vector: ");
+    vec_printf(vec22, uint32_t, "%u");
+
+    for (size_t i = 0; i < 30; i++) {
+        assert((uint32_t) (29 - i) == vec_get_value(&vec22, i, uint32_t));
+    }
+
+    assert(0 == vec_free(&vec22));
+    assert_vec_free(vec22);
+
+    printf("all tests succeded\n");
 
     return 0;
 }
