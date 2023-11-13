@@ -19,6 +19,8 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 
 # Contributors
 
+<a href="https://github.com/MvPizzass">MvPizzass</a>
+
 ### TODO:
 
 - Add contributors
