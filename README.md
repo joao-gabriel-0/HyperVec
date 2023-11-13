@@ -17,19 +17,10 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 
 ---
 
+# Author
+
+<a href="https://github.com/joao-gabriel-0">joao-gabriel-0</a>
+
 # Contributors
 
 <a href="https://github.com/MvPizzass">MvPizzass</a>
-
-### TODO:
-
-- Add contributors
-
-- Add the following functionalities:
-    - vec_from  
-    - vec_find 
-    - vec_map  
-    - vec_reduce 
-    - vec_sort
-    - vec_replace
-    - vec_convolve
