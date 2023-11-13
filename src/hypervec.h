@@ -97,7 +97,7 @@ int vec_insert(Vec_t *vec, void *elem, size_t index);
 /// @brief re-organizes the elements of a vector in reverse order (end to start)
 /// @param vec pointer to a vector
 /// @return 0 if successful, -1 if failed
-int vec_revert(Vec_t *vec);
+int vec_reverse(Vec_t *vec);
 
 /// @brief copy the contents of 'src' to 'dst'
 /// @param dst pointer to the destination vector

@@ -198,7 +198,7 @@ int vec_insert(Vec_t *vec, void *elem, size_t index) {
     return 0;
 }
 
-int vec_revert(Vec_t *vec) {
+int vec_reverse(Vec_t *vec) {
     if (is_null(vec) || is_null(vec->buffer)) {
         return -1;
     }

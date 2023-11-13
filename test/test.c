@@ -477,7 +477,7 @@ int main(void) {
     for (uint32_t i = 0; i < 30; i++) {
         assert(0 == vec_push(&vec22, &i));
     }
-    assert(0 == vec_revert(&vec22));
+    assert(0 == vec_reverse(&vec22));
 
     printf("reversed vector: ");
     vec_printf(vec22, uint32_t, "%u");
