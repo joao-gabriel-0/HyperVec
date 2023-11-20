@@ -16,13 +16,3 @@ HyperVec is a powerful and efficient open-source library designed to optimize dy
 ### Documentations can be found at <a href="https://github.com/joao-gabriel-0/HyperVec/tree/main/doc">doc</a> in <a href="https://github.com/joao-gabriel-0/HyperVec/blob/main/doc/doc-en.md">English</a>, <a href="https://github.com/joao-gabriel-0/HyperVec/blob/main/doc/doc-pt-br.md">Português-BR</a> and <a href="https://github.com/joao-gabriel-0/HyperVec/blob/main/doc/doc-es.md">Español</a>
 
 # Current state: UNSTABLE
-
----
-
-# Author
-
-<a href="https://github.com/joao-gabriel-0">joao-gabriel-0</a>
-
-# Contributors
-
-<a href="https://github.com/MvPizzass">MvPizzass</a>
