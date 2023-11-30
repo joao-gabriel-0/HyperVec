@@ -2,6 +2,7 @@
 #define HV_HYPERVEC_H
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #define HYPERVEC_VERSION_MAJOR "0"
 #define HYPERVEC_VERSION_MINOR "1"

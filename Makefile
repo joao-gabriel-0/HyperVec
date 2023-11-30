@@ -58,7 +58,6 @@ examples:
 	cp $(SRC_DIR)/hypervec.c $(SRC_DIR)/hypervec.h $(EXAMPLES_DIR)/
 	gcc $(EXAMPLES_DIR)/hypervec.c $(EXAMPLES_DIR)/examples.c -o $(EXAMPLES_DIR)/examples $(CFLAGS)
 	
-.SILENT:
 .PHONY: clean
 clean:
 	@echo

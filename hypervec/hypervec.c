@@ -95,12 +95,12 @@ int __gv_shrink(void) {
 }
 
 void *__gv_get(GVec_t *v, size_t elem_index) {
-    if (NULL == v || 0 == v->allocation_size || 0 == v->elem_size || elem_index > v->capacity) {
+    if (NULL == v || 0 == v->allocation_size || 0 == v->elem_size || elem_index > v->occupied) {
         return NULL;
     }
     void *addr = (char *) v->buffer + elem_index * v->elem_size;
 
-    if ((char *) addr > (char *) v->buffer + v->allocation_size) {
+    if ((char *) addr >= (char *) v->buffer + v->allocation_size) {
         return NULL;
     }
     return addr;
