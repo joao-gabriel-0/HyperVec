@@ -1,6 +1,3 @@
-//! TODO: implement __gv_shrink()
-//! TODO: Shrink the vector in __gv_pop() after the pop operation is performed (use __gv_shrink())
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,7 +87,7 @@ int __gv_extend(GVec_t *v, size_t new_capacity) {
     return 0;
 }
 
-int __gv_shrink(void) {   
+int __gv_shrink(GVec_t *v, size_t new_capacity) {   
     return 0;
 }
 
@@ -134,6 +131,14 @@ int __gv_pop(GVec_t *v, void *dst_addr) {
     // memcpy(dst_addr, (char*) v->buffer + (v->occupied - 1) * v->elem_size, v->elem_size);
     v->occupied--;
 
+    return 0;
+}
+
+int __gv_insert(GVec_t *v, void* elem) {
+    return 0;
+}
+
+int __gv_remove(GVec_t *v, void* dst) {
     return 0;
 }
 

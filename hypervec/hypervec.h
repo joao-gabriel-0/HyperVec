@@ -1,3 +1,9 @@
+//! TODO: Implement __gv_shrink()
+//! TODO: Implement __gv_remove()
+//! TODO: Implement __gv_insert()
+//! TODO: Shrink the vector in __gv_pop() after the pop operation is performed (use __gv_shrink())
+//! TODO: Implement Numeric Vectors
+
 #ifndef HV_HYPERVEC_H
 #define HV_HYPERVEC_H
 
@@ -22,6 +28,10 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+// 
+// Generic Vectors
+// 
+
 typedef struct GVec_s {
     void *buffer;           // Pointer to the allocated memory buffer
     size_t allocation_size; // Total size of the allocated memory buffer
@@ -45,10 +55,10 @@ int __gv_free(GVec_t *v);
 
 int __gv_extend(GVec_t *v, size_t new_capacity);
 
-#define gv_shrink() \
-    __gv_shrink()
+#define gv_shrink(v, new_capacity) \
+    __gv_shrink(&v, new_capacity)
 
-int __gv_shrink(void);
+int __gv_shrink(GVec_t *v, size_t new_capacity);
 
 #define gv_get(v, elem_index) \
     __gv_get(&v, elem_index)
@@ -65,11 +75,32 @@ int __gv_push(GVec_t *v, void *elem_addr);
 #define gv_pop(v, dst) \
     __gv_pop(&v, &dst)
 
+#define gv_insert(v, elem) \
+    __gv_insert(&v, &elem);
+
+int __gv_insert(GVec_t *v, void* elem);
+
+#define gv_remove(v, dst) \
+    __gv_insert(&v, &dst);
+
+int __gv_remove(GVec_t *v, void* dst);
+
 int __gv_pop(GVec_t *v, void *dst_addr);
 
 #define gv_iter(v, f) \
     __gv_iter(&v, f)
 
 int __gv_iter(GVec_t *v, void (*f)(void*));
+// 
+// Numeric Vectors
+// 
+
+typedef struct NVec_s {
+    double *buffer;         // Pointer to the allocated memory buffer
+    size_t allocation_size; // Total size of the allocated memory buffer
+    size_t elem_size;       // Size of each individual element in the buffer
+    size_t capacity;        // Number of maximum elements supported by the buffer (given by allocation_size / elem_size) 
+    size_t occupied;        // Number of elements currently occupied in the buffer
+} NVec_t;
 
 #endif // HV_HYPERVEC_H
