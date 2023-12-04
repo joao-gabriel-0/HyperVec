@@ -128,7 +128,6 @@ int __gv_pop(GVec_t *v, void *dst_addr) {
 
     // Copy the last vector's element to the destination address
     memcpy(dst_addr, __gv_get(v, v->occupied - 1), v->elem_size);
-    // memcpy(dst_addr, (char*) v->buffer + (v->occupied - 1) * v->elem_size, v->elem_size);
     v->occupied--;
 
     return 0;

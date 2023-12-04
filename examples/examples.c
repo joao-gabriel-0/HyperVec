@@ -40,6 +40,29 @@ static int mark_task_done(Task_t *task) {
     return 0;
 }
 
+static void mark_all_tasks_done(void *elem) {
+    if (NULL == elem) {
+        return;
+    }
+    (*(Task_t*) elem).task_done = true;
+}
+
+static void list_tasks(GVec_t *tasks) {
+    printf("------------ My TODO List ------------\n");
+
+    for (size_t i = 0; i < tasks->occupied; i++) {
+        Task_t curr_task = *(Task_t*) __gv_get(tasks, i);
+
+        printf("* %s:\n   %s\n   status: [%s]\n",
+            curr_task.task_name,
+            curr_task.task_description,
+            (curr_task.task_done)      ? "DONE" : "NOT DONE",
+            (i == tasks->occupied - 1) ? "" : "\n"
+        );
+    }
+    printf("--------------------------------------\n\n");
+}
+
 int main(void) {
     printf(HYPERVEC_RELEASE"\n");
 
@@ -63,17 +86,27 @@ int main(void) {
     mark_task_done((Task_t*) gv_get(tasks, 2));
 
     // list all tasks
-    printf("----My TODO list----\n");
-    
-    for (size_t i = 0; i < tasks.occupied; i++) {
-        Task_t *current_task = (Task_t*) gv_get(tasks, i);
+    list_tasks(&tasks);
 
-        printf("* %s:\n   %s\n   status: [%s]\n\n",
-            current_task->task_name,
-            current_task->task_description,
-            current_task->task_done ? "DONE" : "NOT DONE"
-        );
-    }
+    // Mark every task as done
+    gv_iter(tasks, mark_all_tasks_done);
+
+    // list all tasks again
+    list_tasks(&tasks);
+
+    // Pop a task and print it
+    Task_t popped_task;
+    gv_pop(tasks, popped_task);
+
+    printf("Popped task:\n");
+
+    printf("* %s:\n   %s\n   status: [%s]\n\n",
+        popped_task.task_name,
+        popped_task.task_description,
+        popped_task.task_done ? "DONE" : "NOT DONE"
+    );
+
+    // Free the tasks vector
     gv_free(tasks);
 
     return 0;

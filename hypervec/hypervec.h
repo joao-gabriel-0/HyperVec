@@ -84,6 +84,7 @@ int __gv_pop(GVec_t *v, void *dst_addr);
     __gv_iter(&v, f)
 
 int __gv_iter(GVec_t *v, void (*f)(void*));
+
 // 
 // Numeric Vectors
 // 
