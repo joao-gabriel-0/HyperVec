@@ -129,7 +129,7 @@ When the vector is reextended, it is so based on a constant:
 ```
 
 $$
-\texttt{new\_capacity} = \texttt{\_\_GV\_PUSH\_REEXTEND\_RATE} \cdot n
+\texttt{new capacity} = \texttt{ PUSH REEXTEND RATE} \cdot n 
 $$
 
 ```c
