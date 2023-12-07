@@ -149,7 +149,7 @@ NOTA: la operación pop aún no reduce el tamaño del vector después de realiza
 int __gv_pop(GVec_t *v, void *dst_addr);
 ```
 
-#### `gv_insert()` **<span style="border-radius:
+#### `gv_insert()` **<span style="border-radius:5px; padding:2px; background-color:rgb(255, 165, 0); color:rgb(240, 240, 240)">Próximamente</span>**
 
 5px; padding:2px; background-color:rgb(255, 165, 0); color:rgb(240, 240, 240)">Próximamente</span>**
 
